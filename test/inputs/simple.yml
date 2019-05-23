@@ -1,0 +1,5 @@
+workflows:
+  basic:
+    jobs:
+      - common_tasks/common_task:
+          task-name: demo-task
