@@ -1,5 +1,54 @@
 version: 2.1
 description: Executes tasks from a private centralized repo (private orbs workaround). See https://github.com/eddiewebb/cci-shared-tasks for sample layout and more instructions.
+examples:
+  simple:
+    description: Call a shared task by name. Using defaults the task will be pulled from https://github.com/${CIRCLE_PROJECT_USERNAME}/cci-shared-tasks/blob/master/tasks/demo-task/run.bash
+    usage: 
+      version: 2.1  
+
+      orbs:
+        common: eddiewebb/common_tasks@x.y.z
+
+      workflows:
+        basic:
+          jobs:
+            - common/common_task:
+                task-name: demo-task
+
+  with_variables:
+    description: Pass additional configuration to common task
+    usage: 
+      version: 2.1  
+
+      orbs:
+        common: eddiewebb/common_tasks@x.y.z
+
+      workflows:
+        basic:
+          jobs:
+            - common/common_task:
+                task-name: demo-task
+                pre-steps:
+                 - run: echo \"export SOME_VAR=value\" >> $BASH_ENV
+
+  override:
+    description: Override the assumed Org, Repo, Folder and Entrypoint
+    usage: 
+      version: 2.1  
+
+      orbs:
+        common: eddiewebb/common_tasks@x.y.z
+
+      workflows:
+        basic:
+          jobs:
+            - common/common_task:
+                task-name: demo-task
+                org_name: "ConfigOrg"
+                repo_name: "shared-tasks-repo"
+                task_name: "tasks_folder"
+                run_name: "start.sh"
+
 
 jobs:
   common_task:
