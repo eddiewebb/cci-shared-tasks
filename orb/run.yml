@@ -90,10 +90,6 @@ commands:
   run_shared_task:  
     parameters:
       #must provide
-      docker-image:
-        type: string
-        default: circleci/node:10
-        description: "Specify path to docker image for executor"
       task-name:
         type: string
         description: "The task folder under your `tasks` folder"
