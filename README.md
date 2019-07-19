@@ -4,6 +4,9 @@ This repo demonstrates how a common/non-proprietary orb can be used to allow tea
 
 It is an interim stop-gap until "private orbs" are a thing.
 
+![High level context diagram shows public orb using SSH to access private git repository](assets/common_tasks.png)
+
+
 
 ## Repo Structure
 - Each task is given a named folder under the `tasks` folder
