@@ -125,7 +125,7 @@ commands:
 
             echo "Attempting to pull common task from: $TASK_REPO_URL"
 
-            mkdir /tmp/<<parameters.repo-name>>
+            mkdir -p /tmp/<<parameters.repo-name>>
             cd /tmp/<<parameters.repo-name>>
             git init -q > /dev/null
             git remote add origin ${TASK_REPO_URL} > /dev/null
