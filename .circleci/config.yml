@@ -34,7 +34,7 @@ jobs:
             bats test
   publish:
     docker:
-      - image: cimg/ruby:latest
+      - image: cimg/base:latest
     working_directory: ~/repo
     steps:
       - checkout
@@ -46,7 +46,7 @@ jobs:
             echo "export PUBLISH_MESSAGE=\"${PUBLISH_MESSAGE}\"" >> $BASH_ENV
             echo $PUBLISH_MESSAGE
       - run:
-          name: Find PR ID
+          name: Publish version to PR
           command: |
             curl "https://circleci.com/api/v1.1/project/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}?circle-token=${CIRCLECI_API_KEY}" > build_info.txt
             PR_NUMBER=`jq -r '.subject' build_info.txt | sed -n 's/Merge pull request #\([0-9]*\) from .*/\1/p'`
