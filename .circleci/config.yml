@@ -1,6 +1,5 @@
 version: 2.1
 
-
 workflows:
   build-deploy:
     jobs:
@@ -25,13 +24,25 @@ jobs:
           command: |
             circleci config pack orb/ > packed.yml
             circleci orb validate packed.yml --token ${CIRCLECI_API_KEY}
-            circleci orb publish packed.yml eddiewebb/common_tasks@dev:${CIRCLE_BRANCH}-${CIRCLE_SHA1} --token ${CIRCLECI_API_KEY}
+            PUBLISH_MESSAGE=`circleci orb publish packed.yml eddiewebb/common_tasks@dev:${CIRCLE_BRANCH}-${CIRCLE_SHA1} --token ${CIRCLECI_API_KEY}`
+            echo "export PUBLISH_MESSAGE=\"${PUBLISH_MESSAGE}\"" >> $BASH_ENV
+            echo $PUBLISH_MESSAGE
       - install-bats
       - run:
           name: Import Tests using BATS
           command: |
             export BATS_IMPORT_DEV_ORB="eddiewebb/common_tasks@dev:${CIRCLE_BRANCH}-${CIRCLE_SHA1}"
             bats test
+      - run:
+          name: Publish Dev version to PR
+          command: |
+            echo "PR_NUMBER is ${CIRCLE_PR_NUMBER}"
+            if [ "$CIRCLE_PR_NUMBER" == "" ];then
+              echo "No pr found, do nothing"
+              exit 0
+            fi
+            curl -X POST -u eddiewebb:${GHI_TOKEN} "https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/issues/${CIRCLE_PR_NUMBER}/comments" -d "{\"body\":\"Dev version of orb available for testing - ${PUBLISH_MESSAGE}\"}"
+
   publish:
     docker:
       - image: cimg/base:latest
@@ -46,7 +57,7 @@ jobs:
             echo "export PUBLISH_MESSAGE=\"${PUBLISH_MESSAGE}\"" >> $BASH_ENV
             echo $PUBLISH_MESSAGE
       - run:
-          name: Publish version to PR
+          name: Publish Prod version to PR
           command: |
             curl "https://circleci.com/api/v1.1/project/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}?circle-token=${CIRCLECI_API_KEY}" > build_info.txt
             PR_NUMBER=`jq -r '.subject' build_info.txt | sed -n 's/Merge pull request #\([0-9]*\) from .*/\1/p'`
@@ -55,9 +66,7 @@ jobs:
               echo "No pr found, do nothing"
               exit 0
             fi
-            echo "export PR_NUMBER=$PR_NUMBER" >> $BASH_ENV
-            curl -X POST -u eddiewebb:${GHI_TOKEN} "https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/issues/${PR_NUMBER}/comments" -d "{\"body\":\"${PUBLISH_MESSAGE}\"}"
-
+            curl -X POST -u eddiewebb:${GHI_TOKEN} "https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/issues/${PR_NUMBER}/comments" -d "{\"body\":\"Production version released! ${PUBLISH_MESSAGE}\"}"
 
 commands:
   install-bats:
