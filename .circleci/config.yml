@@ -51,6 +51,10 @@ jobs:
             curl "https://circleci.com/api/v1.1/project/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}?circle-token=${CIRCLECI_API_KEY}" > build_info.txt
             PR_NUMBER=`jq -r '.subject' build_info.txt | sed -n 's/Merge pull request #\([0-9]*\) from .*/\1/p'`
             echo "PR_NUMBER is ${PR_NUMBER}"
+            if [ "$PR_NUMBER" == "" ];then
+              echo "No pr found, do nothing"
+              exit 0
+            fi
             echo "export PR_NUMBER=$PR_NUMBER" >> $BASH_ENV
             curl -X POST -u eddiewebb:${GHI_TOKEN} "https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/issues/${PR_NUMBER}/comments" -d "{\"body\":\"${PUBLISH_MESSAGE}\"}"
 
