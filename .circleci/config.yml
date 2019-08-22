@@ -1,7 +1,5 @@
 version: 2.1
 
-orbs:
-  pr-comment: benjlevesque/pr-comment@0.1.4
 
 workflows:
   build-deploy:
@@ -54,9 +52,8 @@ jobs:
             PR_NUMBER=`jq -r '.subject' build_info.txt | sed -n 's/Merge pull request #\([0-9]*\) from .*/\1/p'`
             echo "PR_NUMBER is ${PR_NUMBER}"
             echo "export PR_NUMBER=$PR_NUMBER" >> $BASH_ENV
-      - pr-comment/pr-comment:
-          comment: "$PUBLISH_MESSAGE"
-          pr: "$PR_NUMBER"
+            curl -X POST -u eddiewebb:${GHI_TOKEN} "https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/issues/${PR_NUMBER}/comments" -d "{\"body\":\"${PUBLISH_MESSAGE}\"}"
+
 
 commands:
   install-bats:
