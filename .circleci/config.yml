@@ -1,20 +1,19 @@
-
 version: 2.1
 workflows:
   build-deploy:
     jobs:
-      #- test-locally
+      - test
       - publish:
-          #requires:
-          #  - test-locally
+          requires:
+            - test
           filters:
             branches:
               only: master
 
 jobs:
-  test-locally:
+  test:
     docker:
-      - image: circleci/node:10
+      - image: cimg/base:latest
     working_directory: ~/repo
     steps:
       - checkout
@@ -33,7 +32,7 @@ jobs:
             bats test
   publish:
     docker:
-      - image: circleci/node:10
+      - image: cimg/base:latest
     working_directory: ~/repo
     steps:
       - checkout
@@ -42,9 +41,6 @@ jobs:
           name: Promote to prod
           command: |
             circleci orb publish promote eddiewebb/common_tasks@dev:${CIRCLE_BRANCH}-${CIRCLE_SHA1} patch --token ${CIRCLECI_API_KEY}
-  
-
-
 
 commands:
   install-bats:
@@ -54,20 +50,20 @@ commands:
           name: Install BATS (bash testing)
           command: |
             cd /tmp && git clone https://github.com/bats-core/bats-core.git && cd bats-core
-            sudo ./install.sh /usr/local
+            ./install.sh /usr/local
       - run:
           name: Install YQ
           command: |
             curl -L https://github.com/mikefarah/yq/releases/download/2.1.1/yq_linux_amd64 -o yq
             chmod a+x yq
-            sudo mv yq /usr/local/bin/
+            mv yq /usr/local/bin/
   install-circleci:
     description: installs the new CIrcleCI CLI with orb support
     steps:
       - run: 
           name: Install CircleCI CLI (the new one)
           command: |
-            curl https://raw.githubusercontent.com/CircleCI-Public/circleci-cli/master/install.sh --fail --show-error | sudo bash
+            curl https://raw.githubusercontent.com/CircleCI-Public/circleci-cli/master/install.sh --fail --show-error | bash
             circleci version
             echo "Run circleci help"              
             circleci help

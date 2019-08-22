@@ -124,14 +124,17 @@ commands:
             TASK_REPO_URL=${TASK_REPO_URL/$CIRCLE_PROJECT_USERNAME/<<parameters.org-name>>}
 
             echo "Attempting to pull common task from: $TASK_REPO_URL"
+            if [ -d "/tmp/<<parameters.repo-name>>" ];then
+              echo "Task directory exists, skipping to pulling task"              
+              cd /tmp/<<parameters.repo-name>>
+            else
+              mkdir -p /tmp/<<parameters.repo-name>>
+              cd /tmp/<<parameters.repo-name>>
+              git init -q > /dev/null
+              git remote add origin ${TASK_REPO_URL} > /dev/null
+              git fetch -q origin > /dev/null
+            fi
 
-            mkdir /tmp/<<parameters.repo-name>>
-            cd /tmp/<<parameters.repo-name>>
-            git init -q > /dev/null
-            git remote add origin ${TASK_REPO_URL} > /dev/null
-            git fetch -q origin > /dev/null
             git checkout -q origin/master -- tasks/<<parameters.task-name>> > /dev/null
-            
-
             cd - > /dev/null
             bash /tmp/<<parameters.repo-name>>/tasks/<<parameters.task-name>>/<<parameters.run-name>>
