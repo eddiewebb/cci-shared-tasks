@@ -25,8 +25,9 @@ jobs:
             circleci config pack orb/ > packed.yml
             circleci orb validate packed.yml --token ${CIRCLECI_API_KEY}
             PUBLISH_MESSAGE=`circleci orb publish packed.yml eddiewebb/common_tasks@dev:${CIRCLE_BRANCH}-${CIRCLE_SHA1} --token ${CIRCLECI_API_KEY}`
-            echo "export PUBLISH_MESSAGE=\"${PUBLISH_MESSAGE}\"" >> $BASH_ENV
-            echo $PUBLISH_MESSAGE
+            ORB_VERSION=$(echo $PUBLISH_MESSAGE | sed -n 's/Orb `\(.*\)` was published.*/\1/p')
+            echo "export ORB_VERSION=\"${ORB_VERSION}\"" >> $BASH_ENV
+            echo $ORB_VERSION
       - install-bats
       - run:
           name: Import Tests using BATS
@@ -41,7 +42,7 @@ jobs:
               echo "No pr found, do nothing"
               exit 0
             fi
-            curl -X POST -u eddiewebb:${GHI_TOKEN} "https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/issues/${CIRCLE_PR_NUMBER}/comments" -d "{\"body\":\"Dev version of orb available for testing - ${PUBLISH_MESSAGE}\"}"
+            curl -X POST -u eddiewebb:${GHI_TOKEN} "https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/issues/${CIRCLE_PR_NUMBER}/comments" -d "{\"body\":\"Dev version of orb available for testing - ${ORB_VERSION}\"}"
 
   publish:
     docker:
