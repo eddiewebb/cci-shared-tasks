@@ -50,10 +50,10 @@ jobs:
       - run:
           name: Find PR ID
           command: |
-            curl "https://circleci.com/api/v1.1/project/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}?circle-token=${CIRCLECI_API_KEY}"> build_info.txt
+            curl "https://circleci.com/api/v1.1/project/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}?circle-token=${CIRCLECI_API_KEY}" > build_info.txt
             PR_NUMBER=`jq -r '.subject' build_info.txt | sed -n 's/Merge pull request #\([0-9]*\) from .*/\1/p'`
             echo "PR_NUMBER is ${PR_NUMBER}"
-            echo "export PR_NUMBER=$PR_NUMBER >> $BASH_ENV
+            echo "export PR_NUMBER=$PR_NUMBER" >> $BASH_ENV
       - pr-comment/pr-comment:
           comment: "$PUBLISH_MESSAGE"
           pr: "$PR_NUMBER"
