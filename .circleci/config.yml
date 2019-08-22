@@ -42,7 +42,7 @@ jobs:
       - run:
           name: Promote to prod
           command: |
-            PUBLISH_MESSAGE="JUST TESTING" #`circleci orb publish promote eddiewebb/common_tasks@dev:${CIRCLE_BRANCH}-${CIRCLE_SHA1} patch --token ${CIRCLECI_API_KEY}`
+            PUBLISH_MESSAGE=`circleci orb publish promote eddiewebb/common_tasks@dev:${CIRCLE_BRANCH}-${CIRCLE_SHA1} patch --token ${CIRCLECI_API_KEY}`
             echo "export PUBLISH_MESSAGE=\"${PUBLISH_MESSAGE}\"" >> $BASH_ENV
             echo $PUBLISH_MESSAGE
       - run:
