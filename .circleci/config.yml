@@ -1,4 +1,8 @@
 version: 2.1
+
+orbs:
+  pr-comment: benjlevesque/pr-comment@0.1.4
+
 workflows:
   build-deploy:
     jobs:
@@ -40,7 +44,19 @@ jobs:
       - run:
           name: Promote to prod
           command: |
-            circleci orb publish promote eddiewebb/common_tasks@dev:${CIRCLE_BRANCH}-${CIRCLE_SHA1} patch --token ${CIRCLECI_API_KEY}
+            PUBLISH_MESSAGE="JUST TESTING" #`circleci orb publish promote eddiewebb/common_tasks@dev:${CIRCLE_BRANCH}-${CIRCLE_SHA1} patch --token ${CIRCLECI_API_KEY}`
+            echo "export PUBLISH_MESSAGE=\"${PUBLISH_MESSAGE}\"" >> $BASH_ENV
+            echo $PUBLISH_MESSAGE
+      - run:
+          name: Find PR ID
+          command: |
+            curl "https://circleci.com/api/v1.1/project/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}?circle-token=${CIRCLECI_API_KEY}"> build_info.txt
+            PR_NUMBER=`jq -r '.subject' build_info.txt | sed -n 's/Merge pull request #\([0-9]*\) from .*/\1/p'`
+            echo "PR_NUMBER is ${PR_NUMBER}"
+            echo "export PR_NUMBER=$PR_NUMBER >> $BASH_ENV
+      - pr-comment/pr-comment:
+          comment: "$PUBLISH_MESSAGE"
+          pr: "$PR_NUMBER"
 
 commands:
   install-bats:
