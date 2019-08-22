@@ -46,7 +46,7 @@ jobs:
                 exit 0
               fi
             fi
-            curl -X POST -u eddiewebb:${GHI_TOKEN} "https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/issues/${CIRCLE_PR_NUMBER}/comments" -d "{\"body\":\"Dev version of orb available for testing - \`${ORB_VERSION}\`\"}"
+            curl -X POST -u eddiewebb:${GHI_TOKEN} "https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/issues/${CIRCLE_PR_NUMBER}/comments" -d "{\"body\":\"<RobotVoice> Dev version of orb available for testing - \`${ORB_VERSION}\` </RobotVoice>\"}"
 
   publish:
     docker:
