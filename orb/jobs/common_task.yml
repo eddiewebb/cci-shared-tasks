@@ -1,0 +1,33 @@
+parameters:
+  #must provide
+  docker-image:
+    type: string
+    default: circleci/node:10
+    description: "Specify path to docker image for executor"
+  task-name:
+    type: string
+    description: "The task folder under your `tasks` folder"
+
+  #override
+  org-name:
+    type: string
+    default: "${CIRCLE_PROJECT_USERNAME}"
+    description: "Alternate github org name if not same as current project's"
+  repo-name:
+    type: string
+    default: "cci-shared-tasks"
+    description: "Repository containing tasks. Structure must match guideliens for this orb (see docs)"
+  run-name:
+    type: string
+    default: "run.bash"
+    description: "Override entrypoint script"
+
+docker:
+  - image: <<parameters.docker-image>>
+steps:
+  - checkout
+  - run_shared_task:
+      task-name: <<parameters.task-name>>
+      org-name: <<parameters.org-name>>
+      repo-name: <<parameters.repo-name>>
+      run-name: <<parameters.run-name>>
