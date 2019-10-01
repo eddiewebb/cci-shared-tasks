@@ -1,17 +1,16 @@
-override:
-  description: Override the assumed Org, Repo, Folder and Entrypoint
-  usage: 
-    version: 2.1  
+description: Override the assumed Org, Repo, Folder and Entrypoint
+usage: 
+  version: 2.1  
 
-    orbs:
-      common: eddiewebb/common_tasks@x.y.z
+  orbs:
+    common: eddiewebb/common_tasks@x.y.z
 
-    workflows:
-      basic:
-        jobs:
-          - common/common_task:
-              task-name: demo-task
-              org_name: "ConfigOrg"
-              repo_name: "shared-tasks-repo"
-              task_name: "tasks_folder"
-              run_name: "start.sh"
+  workflows:
+    basic:
+      jobs:
+        - common/common_task:
+            task-name: demo-task
+            org_name: "ConfigOrg"
+            repo_name: "shared-tasks-repo"
+            task_name: "tasks_folder"
+            run_name: "start.sh"
