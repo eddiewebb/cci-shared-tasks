@@ -67,7 +67,7 @@ jobs:
               echo "Merge commit did not indicate which SemVer increment to make. Please ammend commit with [semver:FOO] where FOO is major, minor, or patch"
               exit 1
             fi
-            PUBLISH_MESSAGE=`circleci orb publish promote circleci/common_tasks@dev:${CIRCLE_BRANCH}-${CIRCLE_SHA1} ${SEMVER_INCREMENT} --token ${CIRCLECI_API_KEY}`
+            PUBLISH_MESSAGE=`circleci orb publish promote eddiewebb/common_tasks@dev:${CIRCLE_BRANCH}-${CIRCLE_SHA1} ${SEMVER_INCREMENT} --token ${CIRCLECI_API_KEY}`
             echo $PUBLISH_MESSAGE
             ORB_VERSION=$(echo $PUBLISH_MESSAGE | sed -n 's/Orb .* was promoted to `\(.*\)`.*/\1/p')
             echo "export ORB_VERSION=\"${ORB_VERSION}\"" >> $BASH_ENV
