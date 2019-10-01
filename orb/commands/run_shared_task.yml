@@ -4,19 +4,21 @@ parameters:
     type: string
     description: "The task folder under your `tasks` folder"
 
-  #override
+  # advanced, override
   org-name:
     type: string
     default: "${CIRCLE_PROJECT_USERNAME}"
-    description: "Alternate github org name if not same as current project's"
+    description: "(Advanced) Alternate github org name if not same as current project's"
   repo-name:
     type: string
     default: "cci-shared-tasks"
-    description: "Repository containing tasks. Structure must match guideliens for this orb (see docs)"
+    description: "(Advanced) Repository containing tasks. Structure must match guideliens for this orb (see docs)"
   run-name:
     type: string
     default: "run.bash"
-    description: "Override entrypoint script"
+    description: "(Advanced) Override entrypoint script"
+
+
 steps:
   - add_ssh_keys
   - run:

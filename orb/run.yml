@@ -1,2 +1,9 @@
 version: 2.1
 description: Executes tasks from a private centralized repo (private orbs workaround). See https://github.com/eddiewebb/cci-shared-tasks for sample layout and more instructions.
+
+executors:
+  default:
+    docker:
+      - image: cimg/base:2019.08
+  machine:
+    machine: true

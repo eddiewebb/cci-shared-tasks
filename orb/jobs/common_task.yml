@@ -1,12 +1,14 @@
 parameters:
   #must provide
-  docker-image:
-    type: string
-    default: circleci/node:10
-    description: "Specify path to docker image for executor"
   task-name:
     type: string
     description: "The task folder under your `tasks` folder"
+
+  #override
+  executor:
+    type: executor
+    default: default
+    description: Swap executor for machine or alternate docker image
 
   #override
   org-name:
@@ -22,8 +24,7 @@ parameters:
     default: "run.bash"
     description: "Override entrypoint script"
 
-docker:
-  - image: <<parameters.docker-image>>
+executor: << parameters.executor >>
 steps:
   - checkout
   - run_shared_task:

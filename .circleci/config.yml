@@ -14,7 +14,7 @@ workflows:
 jobs:
   test:
     docker:
-      - image: cimg/base:latest
+      - image: cimg/base:2019.08
     working_directory: ~/repo
     steps:
       - checkout
@@ -50,23 +50,30 @@ jobs:
 
   publish:
     docker:
-      - image: cimg/base:latest
+      - image: cimg/base:2019.08
     working_directory: ~/repo
     steps:
       - checkout
       - install-circleci
       - run:
+          name: Grab Commit Info
+          command: |
+            curl "https://circleci.com/api/v1.1/project/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}?circle-token=${CIRCLECI_API_KEY}" > build_info.txt            
+      - run:
           name: Promote to prod
           command: |
-            PUBLISH_MESSAGE=`circleci orb publish promote eddiewebb/common_tasks@dev:${CIRCLE_BRANCH}-${CIRCLE_SHA1} patch --token ${CIRCLECI_API_KEY}`
+            SEMVER_INCREMENT=`jq -r '.subject' build_info.txt | sed -En 's/.*\[semver:(major|minor|patch)\].*/\1/p'`
+            if [ -z ${SEMVER_INCREMENT} ];then
+              echo "Merge commit did not indicate which SemVer increment to make. Please ammend commit with [semver:FOO] where FOO is major, minor, or patch"
+              exit 1
+            fi
+            PUBLISH_MESSAGE=`circleci orb publish promote eddiewebb/common_tasks@dev:${CIRCLE_BRANCH}-${CIRCLE_SHA1} ${SEMVER_INCREMENT} --token ${CIRCLECI_API_KEY}`
             echo $PUBLISH_MESSAGE
             ORB_VERSION=$(echo $PUBLISH_MESSAGE | sed -n 's/Orb .* was promoted to `\(.*\)`.*/\1/p')
             echo "export ORB_VERSION=\"${ORB_VERSION}\"" >> $BASH_ENV
-            echo $ORB_VERSION
       - run:
           name: Publish Prod version to PR
           command: |
-            curl "https://circleci.com/api/v1.1/project/gh/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}?circle-token=${CIRCLECI_API_KEY}" > build_info.txt
             PR_NUMBER=`jq -r '.subject' build_info.txt | sed -n 's/Merge pull request #\([0-9]*\) from.*/\1/p'`
             echo "PR_NUMBER is ${PR_NUMBER}"
             if [ "$PR_NUMBER" == "" ];then
@@ -101,3 +108,4 @@ commands:
             echo "Run circleci help"              
             circleci help
             echo -e "token: ${CIRCLECI_API_KEY}\nverbose: false" > ~/.circleci/cli.yml
+
