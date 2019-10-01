@@ -14,7 +14,7 @@ workflows:
 jobs:
   test:
     docker:
-      - image: cimg/base:latest
+      - image: cimg/base:2019.08
     working_directory: ~/repo
     steps:
       - checkout
@@ -50,7 +50,7 @@ jobs:
 
   publish:
     docker:
-      - image: cimg/base:latest
+      - image: cimg/base:2019.08
     working_directory: ~/repo
     steps:
       - checkout
