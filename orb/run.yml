@@ -31,6 +31,21 @@ examples:
                 pre-steps:
                  - run: echo \"export SOME_VAR=value\" >> $BASH_ENV
 
+  machine:
+    description: Call a shared task by name. Using defaults the task will be pulled from https://github.com/${CIRCLE_PROJECT_USERNAME}/cci-shared-tasks/blob/master/tasks/demo-task/run.bash
+    usage: 
+      version: 2.1  
+
+      orbs:
+        common: eddiewebb/common_tasks@x.y.z
+
+      workflows:
+        basic:
+          jobs:
+            - common/common_task:
+                task-name: demo-task
+                executor: common/machine
+
   override:
     description: Override the assumed Org, Repo, Folder and Entrypoint
     usage: 
@@ -54,13 +69,15 @@ jobs:
   common_task:
     parameters:
       #must provide
-      docker-image:
-        type: string
-        default: circleci/node:10
-        description: "Specify path to docker image for executor"
       task-name:
         type: string
         description: "The task folder under your `tasks` folder"
+
+      #override
+      executor:
+        type: executor
+        default: default
+        description: Swap executor for machine or alternate docker image
 
       #override
       org-name:
@@ -76,8 +93,7 @@ jobs:
         default: "run.bash"
         description: "Override entrypoint script"
 
-    docker:
-      - image: <<parameters.docker-image>>
+    executor: << parameters.executor >>
     steps:
       - checkout
       - run_shared_task:
@@ -94,19 +110,21 @@ commands:
         type: string
         description: "The task folder under your `tasks` folder"
 
-      #override
+      # advanced, override
       org-name:
         type: string
         default: "${CIRCLE_PROJECT_USERNAME}"
-        description: "Alternate github org name if not same as current project's"
+        description: "(Advanced) Alternate github org name if not same as current project's"
       repo-name:
         type: string
         default: "cci-shared-tasks"
-        description: "Repository containing tasks. Structure must match guideliens for this orb (see docs)"
+        description: "(Advanced) Repository containing tasks. Structure must match guideliens for this orb (see docs)"
       run-name:
         type: string
         default: "run.bash"
-        description: "Override entrypoint script"
+        description: "(Advanced) Override entrypoint script"
+
+
     steps:
       - add_ssh_keys
       - run:
@@ -138,3 +156,10 @@ commands:
             git checkout -q origin/master -- tasks/<<parameters.task-name>> > /dev/null
             cd - > /dev/null
             bash /tmp/<<parameters.repo-name>>/tasks/<<parameters.task-name>>/<<parameters.run-name>>
+executors:
+  default:
+    docker:
+      - image: cimg/base:2019.08
+  machine:
+    machine: true
+
