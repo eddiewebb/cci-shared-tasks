@@ -44,7 +44,7 @@ examples:
           jobs:
             - common/common_task:
                 task-name: demo-task
-                executor: machine
+                executor: common/machine
 
   override:
     description: Override the assumed Org, Repo, Folder and Entrypoint
@@ -79,10 +79,6 @@ jobs:
         default: default
         description: Swap executor for machine or alternate docker image
 
-      docker-image:
-        type: string
-        default: circleci/node:10
-        description: "Specify path to docker image for executor"
       #override
       org-name:
         type: string
@@ -162,14 +158,8 @@ commands:
             bash /tmp/<<parameters.repo-name>>/tasks/<<parameters.task-name>>/<<parameters.run-name>>
 executors:
   default:
-    parameters:
-      #must provide
-      docker-image:
-        type: string
-        default: circleci/node:10
-        description: "Specify path to docker image for executor"
     docker:
-      - image: <<parameters.docker-image>>
+      - image: cimg/base:2019.08
   machine:
     machine: true
 
