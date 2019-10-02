@@ -1,0 +1,34 @@
+parameters:
+  #must provide
+  task-name:
+    type: string
+    description: "The task folder under your `tasks` folder"
+
+  #override
+  executor:
+    type: executor
+    default: default
+    description: Swap executor for machine or alternate docker image
+
+  #override
+  org-name:
+    type: string
+    default: "${CIRCLE_PROJECT_USERNAME}"
+    description: "Alternate github org name if not same as current project's"
+  repo-name:
+    type: string
+    default: "cci-shared-tasks"
+    description: "Repository containing tasks. Structure must match guideliens for this orb (see docs)"
+  run-name:
+    type: string
+    default: "run.bash"
+    description: "Override entrypoint script"
+
+executor: << parameters.executor >>
+steps:
+  - checkout
+  - run_shared_task:
+      task-name: <<parameters.task-name>>
+      org-name: <<parameters.org-name>>
+      repo-name: <<parameters.repo-name>>
+      run-name: <<parameters.run-name>>

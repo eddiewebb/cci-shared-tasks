@@ -1,0 +1,14 @@
+description: Pass additional configuration to common task
+usage: 
+  version: 2.1  
+
+  orbs:
+    common: eddiewebb/common_tasks@x.y.z
+
+  workflows:
+    basic:
+      jobs:
+        - common/common_task:
+            task-name: demo-task
+            pre-steps:
+              - run: echo \"export SOME_VAR=value\" >> $BASH_ENV

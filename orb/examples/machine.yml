@@ -1,0 +1,13 @@
+description: Call a shared task by name. Using defaults the task will be pulled from https://github.com/${CIRCLE_PROJECT_USERNAME}/cci-shared-tasks/blob/master/tasks/demo-task/run.bash
+usage: 
+  version: 2.1  
+
+  orbs:
+    common: eddiewebb/common_tasks@x.y.z
+
+  workflows:
+    basic:
+      jobs:
+        - common/common_task:
+            task-name: demo-task
+            executor: common/machine
