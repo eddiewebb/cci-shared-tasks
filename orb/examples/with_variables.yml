@@ -11,3 +11,8 @@ usage:
         - common/common_task:
             task-name: demo-task
             run-params: value
+        - common/common_task:
+            task-name: demo-task
+            pre-steps:		             
+               - run: echo \"export SOME_VAR=value\" >> $BASH_ENV
+        
