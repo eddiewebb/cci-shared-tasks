@@ -2,4 +2,4 @@
 
 echo "Hello ${CIRCLE_USERNAME}"
 
-echo "and a parameter of: ${SOME_VAR}"
+echo "and a parameter of: ${1:-$SOME_VAR}"

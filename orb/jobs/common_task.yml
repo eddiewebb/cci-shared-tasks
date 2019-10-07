@@ -23,6 +23,10 @@ parameters:
     type: string
     default: "run.bash"
     description: "Override entrypoint script"
+  run-params:
+    type: string
+    default: ""
+    description: "Parameters passed to the script"
 
 executor: << parameters.executor >>
 steps:
@@ -32,3 +36,4 @@ steps:
       org-name: <<parameters.org-name>>
       repo-name: <<parameters.repo-name>>
       run-name: <<parameters.run-name>>
+      run-params: <<parameters.run-params>>
