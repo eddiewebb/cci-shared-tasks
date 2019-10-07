@@ -17,6 +17,10 @@ parameters:
     type: string
     default: "run.bash"
     description: "(Advanced) Override entrypoint script"
+  run-params:
+    type: string
+    default: ""
+    description: "Parameters passed to the script"    
 
 
 steps:
@@ -49,4 +53,4 @@ steps:
 
         git checkout -q origin/master -- tasks/<<parameters.task-name>> > /dev/null
         cd - > /dev/null
-        bash /tmp/<<parameters.repo-name>>/tasks/<<parameters.task-name>>/<<parameters.run-name>>
+        bash /tmp/<<parameters.repo-name>>/tasks/<<parameters.task-name>>/<<parameters.run-name>> <<parameters.run-params>>
