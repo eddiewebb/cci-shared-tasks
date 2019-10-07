@@ -11,7 +11,7 @@ parameters:
     description: "(Advanced) Alternate github org name if not same as current project's"
   repo-name:
     type: string
-    default: "cci-shared-tasks"
+    default: "${SHARED_TASKS_REPO_NAME:-cci-shared-tasks}"
     description: "(Advanced) Repository containing tasks. Structure must match guideliens for this orb (see docs)"
   run-name:
     type: string
